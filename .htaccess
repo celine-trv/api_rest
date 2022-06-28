@@ -1,0 +1,38 @@
+php_value display_errors Off
+
+
+# Disable server signature
+ServerSignature Off
+
+# Module Rewrite url
+RewriteEngine On
+# Rewrite base : if app is in a subdomain (or directly server_name), uncomment the line below / else if it is in a subfolder comment the line below
+# RewriteBase /
+
+# Open endpoints (defined and configured with Api.php)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(\w+)/?$ index.php?resource=$1 [QSA,L]
+RewriteRule ^(\w+)/(\d+)/?$ index.php?resource=$1&id=$2 [QSA,L]
+RewriteRule ^(\w+)/(\d+)/(\w+)/?$ index.php?resource=$1&id=$2&resource2=$3 [QSA,L]
+RewriteRule ^(\w+)/(\d+)/(\w+)/(\d+)/?$ index.php?resource=$1&id=$2&resource2=$3&id2=$4 [QSA,L]
+
+
+# HTTPS
+RewriteCond %{HTTPS} !=on
+# REQUEST_URI is better when sub-directories or rewrite rules API above
+# RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
+
+
+# Error 404
+ErrorDocument 404 /portfolio/api-rest/errors/error_404.php
+# ErrorDocument 404 /errors/error_404.php
+
+
+# No directory listing
+Options -Indexes
+# and redirect to home page
+ErrorDocument 403 https://%{SERVER_NAME}
+
+
+Header add Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
